@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#faf8f6" />
+    <title>Sign in | Valmora</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body class="auth-page">
+    <header class="auth-header">
+      <a href="index-1.html" class="auth-logo" aria-label="Valmora home">Valmora</a>
+      <a href="index-1.html" class="auth-back-link">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="m15 18-6-6 6-6M9 12h11" />
+        </svg>
+        Back to store
+      </a>
+    </header>
+
+    <main class="auth-main">
+      <section class="auth-panel" aria-label="Sign in to Valmora">
+        <div class="auth-visual">
+          <div class="auth-visual__copy">
+            <span class="auth-visual__eyebrow">YOUR BEAUTY, OUR PRIORITY</span>
+            <p class="auth-visual__title">A little care goes a long way.</p>
+            <p class="auth-visual__text">Your skincare favorites are waiting for you.</p>
+          </div>
+        </div>
+
+        <div class="auth-content">
+          <div class="auth-content__inner">
+            <a href="index-1.html" class="auth-mobile-logo">Valmora</a>
+            <p class="auth-kicker">STORE ADMINISTRATION</p>
+            <h1 class="auth-title">Administrator sign in</h1>
+            <p class="auth-subtitle">Sign in to manage the store catalog.</p>
+
+            <form class="auth-form" id="login-form">
+              <label class="auth-label" for="email">Email address</label>
+              <input
+                class="auth-input"
+                id="email"
+                name="email"
+                type="email"
+                autocomplete="email"
+                placeholder="you@example.com"
+                required
+              />
+
+              <div class="auth-password-heading">
+                <label class="auth-label" for="password">Password</label>
+                <button class="auth-text-button" type="button" id="forgot-password">
+                  Forgot password?
+                </button>
+              </div>
+              <div class="auth-password-wrap">
+                <input
+                  class="auth-input"
+                  id="password"
+                  name="password"
+                  type="password"
+                  autocomplete="current-password"
+                  placeholder="Enter your password"
+                  minlength="12"
+                  required
+                />
+                <button
+                  class="auth-password-toggle"
+                  type="button"
+                  id="toggle-password"
+                  aria-label="Show password"
+                  aria-pressed="false"
+                >
+                  Show
+                </button>
+              </div>
+
+              <label class="auth-remember">
+                <input type="checkbox" name="remember" />
+                <span>Remember me on this device for 8 hours</span>
+              </label>
+
+              <button class="auth-submit" type="submit">Sign in</button>
+              <p class="auth-message" id="auth-message" role="status" aria-live="polite"></p>
+            </form>
+
+            <p class="auth-signup">
+              Shopping at Valmora? <a href="index-1.html">Continue to the store</a>
+            </p>
+            <p class="auth-security">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12 3 5 6v6c0 4.5 3 7.5 7 9 4-1.5 7-4.5 7-9V6l-7-3Z" />
+                <path d="m9 12 2 2 4-4" />
+              </svg>
+              Your information is kept secure.
+            </p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script>
+      const passwordInput = document.querySelector("#password");
+      const passwordToggle = document.querySelector("#toggle-password");
+      const message = document.querySelector("#auth-message");
+      let csrfToken = "";
+
+      passwordToggle.addEventListener("click", () => {
+        const isVisible = passwordInput.type === "text";
+        passwordInput.type = isVisible ? "password" : "text";
+        passwordToggle.textContent = isVisible ? "Show" : "Hide";
+        passwordToggle.setAttribute("aria-label", isVisible ? "Show password" : "Hide password");
+        passwordToggle.setAttribute("aria-pressed", String(!isVisible));
+      });
+
+      document.querySelector("#forgot-password").addEventListener("click", () => {
+        message.textContent = "Reset an administrator password with the Flask create-admin command.";
+      });
+
+      const loginForm = document.querySelector("#login-form");
+      const loginButton = loginForm.querySelector("button[type='submit']");
+      const apiBaseUrl = ["localhost", "127.0.0.1"].includes(window.location.hostname)
+        && window.location.port !== "5000"
+        ? `${window.location.protocol}//${window.location.hostname}:5000`
+        : "";
+      const apiFetch = (path, options = {}) => fetch(`${apiBaseUrl}${path}`, {
+        ...options,
+        credentials: "include",
+      });
+
+      apiFetch("/api/auth")
+        .then((response) => response.json())
+        .then((auth) => {
+          csrfToken = auth.csrfToken;
+          if (auth.authenticated) window.location.href = "products.html";
+        })
+        .catch(() => {
+          message.textContent = "Could not connect to the store. Start the Flask server and refresh.";
+        });
+
+      loginForm.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        loginButton.disabled = true;
+        message.textContent = "Signing in...";
+        try {
+          const response = await apiFetch("/api/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json", "X-CSRF-Token": csrfToken },
+            body: JSON.stringify({
+              email: loginForm.elements.email.value,
+              password: loginForm.elements.password.value,
+              remember: loginForm.elements.remember.checked,
+            }),
+          });
+          const result = await response.json();
+          if (!response.ok) throw new Error(result.error || "Could not sign in.");
+          window.location.href = "products.html";
+        } catch (error) {
+          message.textContent = error instanceof TypeError
+            ? "Could not connect to the store. Start the Flask server and try again."
+            : error.message;
+        } finally {
+          loginButton.disabled = false;
+        }
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,426 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Browse all Valmora skincare essentials." />
+    <meta name="theme-color" content="#faf8f6" />
+    <title>All products | Valmora</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="announcement-bar">
+      <span>Complimentary shipping on orders of $50 or more <span class="announcement-bar__dot">•</span> Valmora demo store</span>
+    </div>
+    <header class="header">
+      <div class="container">
+        <div class="header__top">
+          <a href="index-1.html" class="header__logo">Valmora</a>
+          <form class="header__search" id="product-search-form" role="search">
+            <svg class="header__search-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="m20 20-3.5-3.5" /></svg>
+            <input class="header__search-input" id="product-search" type="search" name="q" aria-label="Search products, brands and categories" placeholder="Search products, brands and categories" />
+          </form>
+          <div class="header__actions">
+            <a href="login.html" class="btn btn--outline-light">Admin sign in</a>
+            <button class="header__wishlist" id="wishlist-toggle" type="button" aria-label="Show saved products" aria-pressed="false" title="Show saved products">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10Z" /></svg>
+              <span class="wishlist-count" id="wishlist-count" hidden></span>
+            </button>
+            <a href="checkout.html" class="btn btn--primary header__cart">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 4h2l2.4 11h10.2L20 7H6" /><circle cx="9" cy="19" r="1.2" /><circle cx="17" cy="19" r="1.2" /></svg>
+              Cart <span class="header__cart-count" id="cart-count" hidden></span>
+            </a>
+          </div>
+        </div>
+        <nav class="header__nav" aria-label="Main">
+          <a href="products.html">Shop all</a>
+          <a href="#best-sellers" data-category-filter="cleansers">Cleansers</a>
+          <a href="#best-sellers" data-category-filter="serums">Serums</a>
+          <a href="#best-sellers" data-category-filter="skincare">Moisturizers</a>
+          <a href="#best-sellers" data-category-filter="all">New arrivals</a>
+          <a href="#best-sellers" data-category-filter="all">Best sellers</a>
+          <a href="#best-sellers" data-category-filter="sale" class="header__nav-link--sale">Offers</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="container">
+      <section class="catalog-add" id="catalog-admin" aria-labelledby="catalog-add-title" hidden>
+        <div class="catalog-add__heading">
+          <div>
+            <h2 class="section-header__title" id="catalog-add-title">Add a product</h2>
+            <p class="catalog-add__note">Products are saved to the store catalog.</p>
+          </div>
+          <button class="btn btn--outline-light" id="admin-logout" type="button">Sign out</button>
+        </div>
+        <form class="catalog-add__form" id="add-product-form">
+          <label class="catalog-add__field">
+            <span>Product name</span>
+            <input name="name" required maxlength="80" placeholder="e.g. Daily Glow Serum" />
+          </label>
+          <label class="catalog-add__field">
+            <span>Category</span>
+            <select name="category" required>
+              <option value="cleansers">Cleansers</option>
+              <option value="serums">Serums</option>
+              <option value="skincare">Moisturizers</option>
+            </select>
+          </label>
+          <label class="catalog-add__field catalog-add__field--wide">
+            <span>Description</span>
+            <textarea name="description" required maxlength="180" rows="3" placeholder="A short product description"></textarea>
+          </label>
+          <label class="catalog-add__field">
+            <span>Price (USD)</span>
+            <input name="price" type="number" min="0.01" max="99999" step="0.01" required placeholder="18.00" />
+          </label>
+          <label class="catalog-add__field">
+            <span>Size or volume</span>
+            <input name="size" maxlength="30" placeholder="e.g. 30 ml" />
+          </label>
+          <label class="catalog-add__field catalog-add__field--wide">
+            <span>Image URL <span class="catalog-add__optional">Optional</span></span>
+            <input name="image" type="url" placeholder="https://example.com/product.jpg" />
+          </label>
+          <button class="btn btn--primary catalog-add__submit" type="submit">Add product</button>
+        </form>
+        <p class="catalog-add__message" id="add-product-message" role="status" aria-live="polite"></p>
+      </section>
+      <p class="catalog-add__message" id="admin-access-message" role="status" aria-live="polite" hidden>
+        Catalog management is available to <a href="login.html">signed-in administrators</a> only.
+      </p>
+
+      <section class="best-sellers" id="best-sellers">
+        <div class="section-header">
+          <h1 class="section-header__title">All products</h1>
+          <div class="filter-tabs" role="group" aria-label="Filter products">
+            <button class="filter-tabs__item filter-tabs__item--active" type="button" data-filter="all" aria-pressed="true">All</button>
+            <button class="filter-tabs__item" type="button" data-filter="cleansers" aria-pressed="false">Cleansers</button>
+            <button class="filter-tabs__item" type="button" data-filter="serums" aria-pressed="false">Serums</button>
+            <button class="filter-tabs__item" type="button" data-filter="skincare" aria-pressed="false">Moisturizers</button>
+            <button class="filter-tabs__item" type="button" data-filter="sale" aria-pressed="false">On sale</button>
+          </div>
+        </div>
+        <p class="product-results" id="product-results" role="status" aria-live="polite"></p>
+        <div class="best-sellers__grid">
+          <article class="product-card" data-category="cleansers" data-product-id="product-cleanser-gentle">
+            <div class="product-card__image image-placeholder image-placeholder--product"><span class="product-card__badge product-card__badge--new">New</span><img src="images/cleansers.jpg" alt="Valmora Gentle Facial Cleanser" class="image-placeholder__image" /></div>
+            <p class="product-card__brand">VALMORA · CLEANSERS</p><h2 class="product-card__name">Gentle Facial Cleanser</h2>
+            <p class="product-card__description">A soft, daily wash with aloe vera and chamomile.</p><p class="product-card__meta">150 ml <span aria-hidden="true">·</span> All skin types</p>
+            <div class="product-card__footer"><span class="product-card__price">$18.00</span><button class="product-card__favorite" type="button" aria-label="Save Gentle Facial Cleanser" aria-pressed="false" title="Save product"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10Z" /></svg></button><button class="btn btn--primary btn--small" type="button" aria-label="Add Gentle Facial Cleanser to cart">Add to cart</button></div>
+          </article>
+          <article class="product-card" data-category="serums" data-product-id="product-serum-radiant" data-sale="true">
+            <div class="product-card__image image-placeholder image-placeholder--product"><span class="product-card__badge product-card__badge--discount">20% off</span><img src="images/serum.jpg" alt="Valmora Radiant Skin Serum" class="image-placeholder__image" /></div>
+            <p class="product-card__brand">VALMORA · SERUMS</p><h2 class="product-card__name">Radiant Skin Serum</h2>
+            <p class="product-card__description">A lightweight serum for a fresh, luminous look.</p><p class="product-card__meta">30 ml <span aria-hidden="true">·</span> Lightweight serum</p>
+            <div class="product-card__footer"><span class="product-card__price-group"><del class="product-card__original-price">$28.00</del><span class="product-card__price">$22.40</span></span><button class="product-card__favorite" type="button" aria-label="Save Radiant Skin Serum" aria-pressed="false" title="Save product"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10Z" /></svg></button><button class="btn btn--primary btn--small" type="button" aria-label="Add Radiant Skin Serum to cart">Add to cart</button></div>
+          </article>
+          <article class="product-card" data-category="skincare" data-product-id="product-cream-rich">
+            <div class="product-card__image image-placeholder image-placeholder--product"><img src="images/skincare.jpg" alt="Valmora Rich Nourishing Face Cream" class="image-placeholder__image" /></div>
+            <p class="product-card__brand">VALMORA · MOISTURIZERS</p><h2 class="product-card__name">Rich Nourishing Face Cream</h2>
+            <p class="product-card__description">A comforting cream that leaves skin feeling supple.</p><p class="product-card__meta">50 ml <span aria-hidden="true">·</span> Daily moisture</p>
+            <div class="product-card__footer"><span class="product-card__price">$32.00</span><button class="product-card__favorite" type="button" aria-label="Save Rich Nourishing Face Cream" aria-pressed="false" title="Save product"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10Z" /></svg></button><button class="btn btn--primary btn--small" type="button" aria-label="Add Rich Nourishing Face Cream to cart">Add to cart</button></div>
+          </article>
+          <article class="product-card" data-category="cleansers" data-product-id="product-cleanser-hydrating">
+            <div class="product-card__image image-placeholder image-placeholder--product"><img src="images/cerem.jpg" alt="Valmora Daily Hydrating Cleanser" class="image-placeholder__image" /></div>
+            <p class="product-card__brand">VALMORA · CLEANSERS</p><h2 class="product-card__name">Daily Hydrating Cleanser</h2>
+            <p class="product-card__description">A gentle foaming cleanser for a clean, comfortable finish.</p><p class="product-card__meta">200 ml <span aria-hidden="true">·</span> Gentle cleanse</p>
+            <div class="product-card__footer"><span class="product-card__price">$20.00</span><button class="product-card__favorite" type="button" aria-label="Save Daily Hydrating Cleanser" aria-pressed="false" title="Save product"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10Z" /></svg></button><button class="btn btn--primary btn--small" type="button" aria-label="Add Daily Hydrating Cleanser to cart">Add to cart</button></div>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <script>
+      const searchForm = document.querySelector("#product-search-form");
+      const searchInput = document.querySelector("#product-search");
+      const productCards = [...document.querySelectorAll(".product-card")];
+      const productGrid = document.querySelector(".best-sellers__grid");
+      const addProductForm = document.querySelector("#add-product-form");
+      const addProductMessage = document.querySelector("#add-product-message");
+      const catalogAdmin = document.querySelector("#catalog-admin");
+      const adminAccessMessage = document.querySelector("#admin-access-message");
+      const adminLogout = document.querySelector("#admin-logout");
+      const filterButtons = [...document.querySelectorAll(".filter-tabs__item")];
+      const resultMessage = document.querySelector("#product-results");
+      const wishlistToggle = document.querySelector("#wishlist-toggle");
+      const wishlistCount = document.querySelector("#wishlist-count");
+      const cartStorageKey = "valmora-cart-v2";
+      const wishlistStorageKey = "valmora-wishlist-v1";
+      const apiBaseUrl = ["localhost", "127.0.0.1"].includes(window.location.hostname)
+        && window.location.port !== "5000"
+        ? `${window.location.protocol}//${window.location.hostname}:5000`
+        : "";
+      const apiFetch = (path, options = {}) => fetch(`${apiBaseUrl}${path}`, {
+        ...options,
+        credentials: "include",
+      });
+      let activeCategory = "all";
+      let showingSavedProducts = false;
+      let csrfToken = "";
+      let isAdminAuthenticated = false;
+
+      function readStorage(key) {
+        try {
+          const value = JSON.parse(localStorage.getItem(key) || "[]");
+          return Array.isArray(value) ? value : [];
+        } catch {
+          return [];
+        }
+      }
+
+      function updateProducts() {
+        const query = searchInput.value.trim().toLowerCase();
+        const savedIds = readStorage(wishlistStorageKey);
+        let visibleCount = 0;
+        productCards.forEach((card) => {
+          const category = card.dataset.category;
+          const matchesCategory = activeCategory === "all" || (activeCategory === "sale" ? card.dataset.sale === "true" : category === activeCategory);
+          const matchesSearch = `${card.textContent} ${category}`.toLowerCase().includes(query);
+          const isVisible = matchesCategory && matchesSearch && (!showingSavedProducts || savedIds.includes(card.dataset.productId));
+          card.hidden = !isVisible;
+          visibleCount += Number(isVisible);
+        });
+        resultMessage.textContent = visibleCount
+          ? `${visibleCount} ${visibleCount === 1 ? "product" : "products"} ${showingSavedProducts ? "saved" : "found"}`
+          : showingSavedProducts ? "No saved products yet. Select a heart to save a favorite." : "No products match your search or filters.";
+      }
+
+      function createProductCard(product) {
+        const categoryLabels = {
+          cleansers: "CLEANSERS",
+          serums: "SERUMS",
+          skincare: "MOISTURIZERS",
+        };
+        const categoryImages = {
+          cleansers: "images/cleansers.jpg",
+          serums: "images/serum.jpg",
+          skincare: "images/skincare.jpg",
+        };
+        const card = document.createElement("article");
+        card.className = "product-card";
+        card.dataset.category = product.category;
+        card.dataset.productId = product.id;
+
+        const imageWrap = document.createElement("div");
+        imageWrap.className = "product-card__image image-placeholder image-placeholder--product";
+        const image = document.createElement("img");
+        image.className = "image-placeholder__image";
+        image.src = product.image || categoryImages[product.category];
+        image.alt = product.name;
+        imageWrap.append(image);
+
+        const brand = document.createElement("p");
+        brand.className = "product-card__brand";
+        brand.textContent = `VALMORA · ${categoryLabels[product.category]}`;
+        const name = document.createElement("h2");
+        name.className = "product-card__name";
+        name.textContent = product.name;
+        const description = document.createElement("p");
+        description.className = "product-card__description";
+        description.textContent = product.description;
+        const meta = document.createElement("p");
+        meta.className = "product-card__meta";
+        meta.textContent = product.size || "Daily skincare";
+
+        const footer = document.createElement("div");
+        footer.className = "product-card__footer";
+        const price = document.createElement("span");
+        price.className = "product-card__price";
+        price.textContent = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(product.price);
+        const favorite = document.createElement("button");
+        favorite.className = "product-card__favorite";
+        favorite.type = "button";
+        favorite.setAttribute("aria-label", `Save ${product.name}`);
+        favorite.setAttribute("aria-pressed", "false");
+        favorite.title = "Save product";
+        const icon = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+        icon.setAttribute("viewBox", "0 0 24 24");
+        icon.setAttribute("aria-hidden", "true");
+        const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        path.setAttribute("d", "M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10Z");
+        icon.append(path);
+        favorite.append(icon);
+        const addToCart = document.createElement("button");
+        addToCart.className = "btn btn--primary btn--small";
+        addToCart.type = "button";
+        addToCart.textContent = "Add to cart";
+        addToCart.setAttribute("aria-label", `Add ${product.name} to cart`);
+        footer.append(price, favorite, addToCart);
+        card.append(imageWrap, brand, name, description, meta, footer);
+        return card;
+      }
+
+      function setActiveCategory(category) {
+        activeCategory = category;
+        filterButtons.forEach((button) => {
+          const isActive = button.dataset.filter === category;
+          button.classList.toggle("filter-tabs__item--active", isActive);
+          button.setAttribute("aria-pressed", String(isActive));
+        });
+        updateProducts();
+      }
+
+      function updateWishlistControls() {
+        const savedIds = readStorage(wishlistStorageKey);
+        wishlistCount.textContent = savedIds.length;
+        wishlistCount.hidden = savedIds.length === 0;
+        productCards.forEach((card) => {
+          const button = card.querySelector(".product-card__favorite");
+          const isSaved = savedIds.includes(card.dataset.productId);
+          button.classList.toggle("product-card__favorite--saved", isSaved);
+          button.setAttribute("aria-pressed", String(isSaved));
+        });
+      }
+
+      function bindProductCard(card) {
+        card.querySelector(".product-card__favorite").addEventListener("click", () => {
+          const savedIds = readStorage(wishlistStorageKey);
+          const productId = card.dataset.productId;
+          const savedIndex = savedIds.indexOf(productId);
+          if (savedIndex === -1) savedIds.push(productId);
+          else savedIds.splice(savedIndex, 1);
+          localStorage.setItem(wishlistStorageKey, JSON.stringify(savedIds));
+          updateWishlistControls();
+          updateProducts();
+        });
+
+        card.querySelector(".product-card__footer .btn").addEventListener("click", () => {
+          const cart = readStorage(cartStorageKey);
+          const productId = card.dataset.productId;
+          const existingItem = cart.find((item) => item.id === productId);
+          if (existingItem) existingItem.quantity += 1;
+          else cart.push({
+            id: productId,
+            name: card.querySelector(".product-card__name").textContent.trim(),
+            brand: card.querySelector(".product-card__brand").textContent.trim(),
+            price: card.querySelector(".product-card__price").textContent.trim(),
+            image: card.querySelector(".product-card__image img").getAttribute("src"),
+            quantity: 1,
+          });
+          localStorage.setItem(cartStorageKey, JSON.stringify(cart));
+          window.location.href = "checkout.html";
+        });
+      }
+
+      searchInput.addEventListener("input", updateProducts);
+      searchForm.addEventListener("submit", (event) => event.preventDefault());
+      filterButtons.forEach((button) => button.addEventListener("click", () => setActiveCategory(button.dataset.filter)));
+      document.querySelectorAll("[data-category-filter]").forEach((link) => {
+        link.addEventListener("click", (event) => {
+          event.preventDefault();
+          setActiveCategory(link.dataset.categoryFilter);
+          document.querySelector("#best-sellers").scrollIntoView({ behavior: "smooth" });
+        });
+      });
+
+      addProductForm.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        if (!isAdminAuthenticated) return;
+        const formData = new FormData(addProductForm);
+        const product = {
+          name: formData.get("name").trim(),
+          category: formData.get("category"),
+          description: formData.get("description").trim(),
+          price: Number(formData.get("price")),
+          size: formData.get("size").trim(),
+          image: formData.get("image").trim(),
+        };
+        addProductMessage.textContent = "Saving product...";
+
+        try {
+          const response = await apiFetch("/api/products", {
+            method: "POST",
+            headers: { "Content-Type": "application/json", "X-CSRF-Token": csrfToken },
+            body: JSON.stringify(product),
+          });
+          const savedProduct = await response.json();
+          if (!response.ok) throw new Error(savedProduct.error || "Could not save product.");
+
+          const card = createProductCard(savedProduct);
+          productGrid.prepend(card);
+          productCards.unshift(card);
+          bindProductCard(card);
+          updateWishlistControls();
+          updateProducts();
+          addProductForm.reset();
+          addProductMessage.textContent = `${savedProduct.name} was added to the catalog.`;
+        } catch (error) {
+          addProductMessage.textContent = error instanceof TypeError
+            ? "Could not connect to the store. Start the Flask server and try again."
+            : error.message;
+        }
+      });
+
+      productCards.forEach(bindProductCard);
+
+      async function loadAdminState() {
+        const response = await apiFetch("/api/auth");
+        const auth = await response.json();
+        if (!response.ok) throw new Error("Could not check admin sign-in status.");
+        csrfToken = auth.csrfToken;
+        isAdminAuthenticated = auth.authenticated;
+        catalogAdmin.hidden = !isAdminAuthenticated;
+        adminAccessMessage.hidden = isAdminAuthenticated;
+      }
+
+      adminLogout.addEventListener("click", async () => {
+        adminLogout.disabled = true;
+        try {
+          const response = await apiFetch("/api/logout", {
+            method: "POST",
+            headers: { "X-CSRF-Token": csrfToken },
+          });
+          const result = await response.json();
+          if (!response.ok) throw new Error(result.error || "Could not sign out.");
+          csrfToken = result.csrfToken;
+          isAdminAuthenticated = false;
+          catalogAdmin.hidden = true;
+          adminAccessMessage.hidden = false;
+        } catch (error) {
+          addProductMessage.textContent = error.message;
+        } finally {
+          adminLogout.disabled = false;
+        }
+      });
+
+      async function loadCustomProducts() {
+        try {
+          const response = await apiFetch("/api/products");
+          const customProducts = await response.json();
+          if (!response.ok || !Array.isArray(customProducts)) throw new Error("Could not load catalog products.");
+          customProducts.forEach((product) => {
+            const card = createProductCard(product);
+            productGrid.append(card);
+            productCards.push(card);
+            bindProductCard(card);
+          });
+          updateProducts();
+          updateWishlistControls();
+        } catch {
+          addProductMessage.textContent = "Could not connect to the store. Start the Flask server to load saved products.";
+        }
+      }
+
+      wishlistToggle.addEventListener("click", () => {
+        showingSavedProducts = !showingSavedProducts;
+        wishlistToggle.setAttribute("aria-pressed", String(showingSavedProducts));
+        wishlistToggle.setAttribute("aria-label", showingSavedProducts ? "Show all products" : "Show saved products");
+        wishlistToggle.title = showingSavedProducts ? "Show all products" : "Show saved products";
+        setActiveCategory("all");
+      });
+
+      const cartCount = document.querySelector("#cart-count");
+      const itemCount = readStorage(cartStorageKey).reduce((total, item) => total + item.quantity, 0);
+      cartCount.textContent = itemCount;
+      cartCount.hidden = itemCount === 0;
+      updateProducts();
+      updateWishlistControls();
+      loadCustomProducts();
+      loadAdminState().catch(() => {
+        adminAccessMessage.hidden = false;
+        adminAccessMessage.textContent = "Could not check admin sign-in. Start the Flask server and refresh.";
+      });
+    </script>
+  </body>
+</html>
